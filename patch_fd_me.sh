@@ -6,8 +6,9 @@
 ME_FILE="$1"
 DUMP_FILE="$2"
 
-ME_OFFSET=$((0x1000))
-ME_TARGET_SIZE=$((0x6FF000))
+# 看了原厂备份，发现地址在0x3000
+ME_OFFSET=$((0x3000))
+ME_TARGET_SIZE=$((0x6FD000))
 FD_OFFSET=$((0x102))
 
 if [ $# -ne 2 ]; then
@@ -26,7 +27,7 @@ if [ ! -f "$DUMP_FILE" ]; then
 fi
 
 echo "=============================="
-echo " Step 5 - 补齐 ME 文件到 0x6FF000"
+echo " Step 5 - 补齐 ME 文件到 0x6FD000"
 echo "=============================="
 
 ME_ORIGINAL_SIZE=$(stat -c%s "$ME_FILE")
@@ -36,7 +37,7 @@ printf "原始 ME 文件大小: %d bytes (0x%X)\n" \
     "$ME_ORIGINAL_SIZE"
 
 if [ "$ME_ORIGINAL_SIZE" -gt "$ME_TARGET_SIZE" ]; then
-    echo "错误：ME 文件已经大于 0x6FF000"
+    echo "错误：ME 文件已经大于 0x6FD000"
     exit 1
 fi
 
