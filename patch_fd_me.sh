@@ -77,16 +77,16 @@ echo "=============================="
 echo " Step 6 - 写入 dump 的 ME 区域"
 echo "=============================="
 
-DUMP_BACKUP="${DUMP_FILE}.bak"
-cp "$DUMP_FILE" "$DUMP_BACKUP" || {
-    echo "错误：dump 备份失败"
+DUMP_COPY="${DUMP_FILE}.new.bin"
+cp "$DUMP_FILE" "$DUMP_COPY" || {
+    echo "错误：dump 拷贝失败"
     exit 1
 }
 
-echo "已备份 dump 文件 -> $DUMP_BACKUP"
+echo "已创建 dump 新文件 -> $DUMP_COPY"
 
 dd if="$ME_FILE" \
-   of="$DUMP_FILE" \
+   of="$DUMP_COPY" \
    bs=1 \
    seek="$ME_OFFSET" \
    count="$ME_TARGET_SIZE" \
@@ -107,7 +107,7 @@ echo "=============================="
 echo " Step 7 - 修改 FD offset 0x102"
 echo "=============================="
 
-OLD_VALUE=$(dd if="$DUMP_FILE" \
+OLD_VALUE=$(dd if="$DUMP_COPY" \
     bs=1 \
     skip="$FD_OFFSET" \
     count=1 \
@@ -118,14 +118,14 @@ OLD_VALUE=$(dd if="$DUMP_FILE" \
 echo "原值: 0x$OLD_VALUE"
 
 printf '\x91' \
-    | dd of="$DUMP_FILE" \
+    | dd of="$DUMP_COPY" \
          bs=1 \
          seek="$FD_OFFSET" \
          count=1 \
          conv=notrunc \
          2>/dev/null
 
-NEW_VALUE=$(dd if="$DUMP_FILE" \
+NEW_VALUE=$(dd if="$DUMP_COPY" \
     bs=1 \
     skip="$FD_OFFSET" \
     count=1 \
@@ -140,7 +140,7 @@ echo "=============================="
 echo " Step 8 - 修改 FD offset 0x307"
 echo "=============================="
 # 这里的 skip 必须加 $
-OLD_VALUE2=$(dd if="$DUMP_FILE" \
+OLD_VALUE2=$(dd if="$DUMP_COPY" \
     bs=1 \
     skip="$FD_OFFSET2" \
     count=1 \
@@ -152,7 +152,7 @@ echo "原值: 0x$OLD_VALUE2"
 
 # 这里的 seek 必须加 $
 printf '\xa0' \
-    | dd of="$DUMP_FILE" \
+    | dd of="$DUMP_COPY" \
          bs=1 \
          seek="$FD_OFFSET2" \
          count=1 \
@@ -160,7 +160,7 @@ printf '\xa0' \
          2>/dev/null
 
 # 这里的 skip 必须加 $
-NEW_VALUE2=$(dd if="$DUMP_FILE" \
+NEW_VALUE2=$(dd if="$DUMP_COPY" \
     bs=1 \
     skip="$FD_OFFSET2" \
     count=1 \

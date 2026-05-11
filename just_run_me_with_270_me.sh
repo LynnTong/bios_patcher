@@ -2,7 +2,7 @@
 set -e
 
 echo "1. 开始提取donor me"
-./ifdtool_src/ifdtool -x  -p sklkbl ./H11MDGS7.30
+./ifdtool_src/ifdtool -x  -p sklkbl ./H27P1.00
 cp -f ./flashregion_2_intel_me.bin deguard/me_donor.bin
 rm -rf ./flashregion*.bin
 
