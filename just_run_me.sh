@@ -22,7 +22,8 @@ echo "3.生成deguard_me"
 ./finalimage.py --delta data/delta/optiplex_7050 --version 11.6.0.1126 --pch H --sku 2M --fake-fpfs data/fpfs/zero --input ./me_donor.bin --output me_deguard.bin
 cp ./me_deguard.bin ../
 rm ./me_deguard.bin
-rm -rf deguard/data/delta/optiplex_7050
+rm -rf data/delta/optiplex_7050
+rm -rf ./flashregion_2_intel_me.bin
 cd ..
 
 echo "4.对烧录器固件进行patch"
