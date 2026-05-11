@@ -10,6 +10,7 @@ DUMP_FILE="$2"
 ME_OFFSET=$((0x3000))
 ME_TARGET_SIZE=$((0x6FD000))
 FD_OFFSET=$((0x102))
+FD_OFFSET2=$((0x307))
 
 if [ $# -ne 2 ]; then
     echo "用法: $0 <me_deguard.bin> <dump.bin>"
@@ -136,9 +137,45 @@ echo "新值: 0x$NEW_VALUE"
 
 echo
 echo "=============================="
+echo " Step 8 - 修改 FD offset 0x307"
+echo "=============================="
+# 这里的 skip 必须加 $
+OLD_VALUE2=$(dd if="$DUMP_FILE" \
+    bs=1 \
+    skip="$FD_OFFSET2" \
+    count=1 \
+    2>/dev/null \
+    | od -An -tx1 \
+    | tr -d ' \n')
+
+echo "原值: 0x$OLD_VALUE2"
+
+# 这里的 seek 必须加 $
+printf '\xa0' \
+    | dd of="$DUMP_FILE" \
+         bs=1 \
+         seek="$FD_OFFSET2" \
+         count=1 \
+         conv=notrunc \
+         2>/dev/null
+
+# 这里的 skip 必须加 $
+NEW_VALUE2=$(dd if="$DUMP_FILE" \
+    bs=1 \
+    skip="$FD_OFFSET2" \
+    count=1 \
+    2>/dev/null \
+    | od -An -tx1 \
+    | tr -d ' \n')
+
+echo "新值: 0x$NEW_VALUE2"
+
+echo
+echo "=============================="
 echo " 全部完成"
 echo "=============================="
 echo "已完成:"
 echo "  [5] 补齐 ME"
 echo "  [6] 写入 dump 的 ME 区域"
 echo "  [7] 修改 FD 0x102 -> 0x91"
+echo "  [8] 修改 FD 0x307 -> 0xa0"
